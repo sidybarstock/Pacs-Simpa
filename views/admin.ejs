@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Administration – PACS/SIMPA</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <div class="container nav-container">
+      <a href="/" class="brand"><div class="logo">PS</div><div><div class="name">PACS/SIMPA</div></div></a>
+      <nav>
+        <a href="/">Accueil</a>
+        <a href="/logout">Déconnexion</a>
+      </nav>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container">
+      <h2 class="title">Tableau de bord</h2>
+      <div class="grid" style="gap:2rem">
+        <!-- Events management -->
+        <div>
+          <h3>Événements</h3>
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Titre</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Date</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Horaires</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Lieu</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% events.forEach(ev => { %>
+              <tr>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= ev.title %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= ev.date %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= ev.start_time %><% if (ev.end_time) { %>–<%= ev.end_time %><% } %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= ev.location %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+          <details style="margin-top:1rem;">
+            <summary class="btn btn-ghost">Ajouter un événement</summary>
+            <form action="/admin/events/add" method="POST" style="display:flex; flex-direction:column; gap:.5rem; margin-top:.5rem;">
+              <input type="text" name="title" placeholder="Titre" required style="padding:.5rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;">
+              <textarea name="description" placeholder="Description" style="padding:.5rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;"></textarea>
+              <label> Date <input type="date" name="date" required style="padding:.4rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;"></label>
+              <label> Heure début <input type="time" name="start_time" required style="padding:.4rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;"></label>
+              <label> Heure fin <input type="time" name="end_time" style="padding:.4rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;"></label>
+              <input type="text" name="location" placeholder="Lieu" required style="padding:.5rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;">
+              <input type="text" name="cost" placeholder="Tarif (ex: gratuit)" style="padding:.5rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;">
+              <input type="number" name="capacity" placeholder="Capacité" style="padding:.5rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;">
+              <button type="submit" class="btn btn-primary" style="width:max-content;">Créer</button>
+            </form>
+          </details>
+        </div>
+        <!-- Registrations -->
+        <div>
+          <h3>Inscriptions aux événements</h3>
+          <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+            <thead>
+              <tr>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Événement</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Nom</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Email</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Téléphone</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% registrations.forEach(reg => { %>
+              <tr>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= reg.event_title %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= reg.name %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= reg.email %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= reg.phone || '' %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= reg.created_at %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <!-- Volunteers -->
+        <div>
+          <h3>Bénévoles</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:1rem;">
+            <% volunteers.forEach(v => { %>
+              <div class="card" style="padding:12px; width:200px;">
+                <img src="<%= v.photo %>" alt="<%= v.name %>" style="width:100%; height:120px; object-fit:cover; border-radius:8px;">
+                <strong><%= v.name %></strong>
+                <div class="muted"><%= v.position %></div>
+                <p style="font-size:.9rem; margin-top:.3rem;"> <%= v.bio %> </p>
+              </div>
+            <% }); %>
+          </div>
+          <details style="margin-top:1rem;">
+            <summary class="btn btn-ghost">Ajouter un bénévole</summary>
+            <form action="/admin/volunteers/add" method="POST" style="display:flex; flex-direction:column; gap:.5rem; margin-top:.5rem; max-width:360px;">
+              <input type="text" name="name" placeholder="Nom" required style="padding:.5rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;">
+              <input type="text" name="position" placeholder="Poste / Rôle" required style="padding:.5rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;">
+              <textarea name="bio" placeholder="Bio" style="padding:.5rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;"></textarea>
+              <input type="text" name="photo" placeholder="URL de la photo" style="padding:.5rem; border:1px solid rgba(2,6,23,.15); border-radius:8px;">
+              <button type="submit" class="btn btn-primary" style="width:max-content;">Créer</button>
+            </form>
+          </details>
+        </div>
+        <!-- Contacts -->
+        <div>
+          <h3>Messages de contact</h3>
+          <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+            <thead>
+              <tr>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Nom</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Email</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Sujet</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Message</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% contacts.forEach(c => { %>
+              <tr>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= c.name %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= c.email %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= c.subject || '' %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= c.message %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= c.created_at %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <!-- Orders -->
+        <div>
+          <h3>Commandes</h3>
+          <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+            <thead>
+              <tr>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">ID</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Nom</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Email</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Téléphone</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Total</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Articles</th>
+                <th style="text-align:left; padding:4px; border-bottom:1px solid rgba(2,6,23,.1)">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(o => { %>
+              <tr>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= o.id %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= o.name || '' %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= o.email || '' %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= o.phone || '' %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= o.total.toLocaleString('fr-FR', { style:'currency', currency:'EUR' }) %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= o.items %></td>
+                <td style="padding:4px; border-bottom:1px solid rgba(2,6,23,.05)"><%= o.created_at %></td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

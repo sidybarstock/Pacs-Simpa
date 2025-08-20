@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Connexion – PACS/SIMPA</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <div class="container nav-container">
+      <a href="/" class="brand"><div class="logo">PS</div><div><div class="name">PACS/SIMPA</div></div></a>
+    </div>
+  </header>
+  <main class="section">
+    <div class="container" style="max-width:420px;">
+      <h2 class="title">Connexion</h2>
+      <% if (error) { %>
+        <p style="color: var(--danger); font-weight:600;"> <%= error %> </p>
+      <% } %>
+      <form action="/login" method="POST" style="display:flex; flex-direction:column; gap:.8rem;">
+        <label>
+          <span class="muted">Nom d’utilisateur</span>
+          <input type="text" name="username" required style="padding:.6rem; border-radius:8px; border:1px solid rgba(2,6,23,.15); width:100%;">
+        </label>
+        <label>
+          <span class="muted">Mot de passe</span>
+          <input type="password" name="password" required style="padding:.6rem; border-radius:8px; border:1px solid rgba(2,6,23,.15); width:100%;">
+        </label>
+        <button type="submit" class="btn btn-primary" style="width:max-content; align-self:flex-start;">Se connecter</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>
